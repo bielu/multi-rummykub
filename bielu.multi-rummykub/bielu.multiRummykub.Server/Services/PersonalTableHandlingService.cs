@@ -25,7 +25,10 @@ public class PersonalTableHandlingService
     }
     public PersonalBoard GetPersonalBoard(Guid personalBoardId)
     {
-     
+        return new PersonalBoard()
+        {
+
+        };
     }
     public void AddCubeToPersonalBoard(Guid personalBoard, Cube cube)
     {

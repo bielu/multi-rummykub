@@ -13,7 +13,33 @@ public class SetService : ISetService
             SortType.Value => ProposeValueSets(cubes),
         };
     }
-
+    public CubeSet AddCubeToSet(Guid setId, Cube cube)
+    {
+        //todo: read set from db
+        var set = new CubeSet()
+        {
+            Id = new Guid(),
+            Type = SetType.Color,
+            Valid = true,
+            Cubes = new List<Cube>()
+        };
+        cube.Locked = true;
+        set.Cubes.Add(cube);
+        return set;
+    }
+    public CubeSet RemoveCubeFromSet(Guid setId, Cube cube)
+    {
+        //todo: read set from db
+        var set = new CubeSet()
+        {
+            Id = new Guid(),
+            Type = SetType.Color,
+            Valid = true,
+            Cubes = new List<Cube>()
+        };
+        set.Cubes.Remove(cube);
+        return set;
+    }
     private IList<CubeSet> ProposeValueSets(IList<Cube> cubes)
     {
         var colorGroups = cubes.GroupBy(x => x.Value);
@@ -77,4 +103,6 @@ public class SetService : ISetService
 public interface ISetService
 {
     IList<CubeSet> ProposeSets(IList<Cube> cubes, SortType type);
+    CubeSet RemoveCubeFromSet(Guid setId, Cube cube);
+    CubeSet AddCubeToSet(Guid setId, Cube cube);
 }
