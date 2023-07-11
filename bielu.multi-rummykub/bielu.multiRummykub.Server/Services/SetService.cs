@@ -13,6 +13,7 @@ public class SetService : ISetService
             SortType.Value => ProposeValueSets(cubes),
         };
     }
+
     public CubeSet AddCubeToSet(Guid setId, Cube cube)
     {
         //todo: read set from db
@@ -27,6 +28,7 @@ public class SetService : ISetService
         set.Cubes.Add(cube);
         return set;
     }
+
     public CubeSet RemoveCubeFromSet(Guid setId, Cube cube)
     {
         //todo: read set from db
@@ -40,21 +42,59 @@ public class SetService : ISetService
         set.Cubes.Remove(cube);
         return set;
     }
+
     private IList<CubeSet> ProposeValueSets(IList<Cube> cubes)
     {
         var colorGroups = cubes.GroupBy(x => x.Value);
         var sets = new List<CubeSet>();
         foreach (var group in colorGroups)
         {
-            var set = new CubeSet()
-            {
-                Id = new Guid(),
-                Type = SetType.Color,
-                Valid = true,
-                Cubes = group.OrderBy(x => x.Value).ToList()
-            };
-            sets.Add(set);
+            sets.AddRange(ProposeForGroup(group.ToList()));
         }
+
+        return sets;
+    }
+
+    private IList<CubeSet> ProposeForGroup(IList<Cube> group)
+    {
+        var sets = new List<CubeSet>();
+
+        var leftOvers = new List<Cube>();
+        var set = new CubeSet()
+        {
+            Id = new Guid(),
+            Type = SetType.Color,
+            Valid = true,
+            Cubes = group.OrderBy(x => x.Value).ToList()
+        };
+        
+        foreach (var cube in group.OrderBy(x => x.Value))
+        {
+            if (set.Cubes.Any(x => x.Value == cube.Value))
+            {
+                leftOvers.Add(cube);
+                continue;
+            }
+
+            set.Cubes.Add(cube);
+        }
+
+        sets.Add(set);
+        while (leftOvers.Any())
+        {
+            leftOvers.Clear();
+            foreach (var cube in group.OrderBy(x => x.Value))
+            {
+                if (set.Cubes.Any(x => x.Value == cube.Value))
+                {
+                    leftOvers.Add(cube);
+                    continue;
+                }
+
+                set.Cubes.Add(cube);
+            }
+        }
+      
 
         return sets;
     }
