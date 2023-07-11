@@ -10,4 +10,5 @@ public class Cube
     public bool IsJoker { get; set; }
     public bool New { get; set; }
     public bool AddedByCurrentPlayer { get; set; }
+    public bool Locked { get; set; }
 }
