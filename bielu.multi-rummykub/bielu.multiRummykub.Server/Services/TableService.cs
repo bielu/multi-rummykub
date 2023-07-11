@@ -24,13 +24,15 @@ public class TableService
     {
         var table = new Table
         {
+            Id = Guid.NewGuid(),
             Cubes = GenerateCubes(maxPlayers,scaleType ),
             Players = new List<Guid>(),
             MaxPlayers = maxPlayers,
             ScaleType = scaleType
         };
 
-        return _tableDbContext.Tables.Add(table).Entity;
+       // return _tableDbContext.Tables.Add(table).Entity;
+       return table;
     }
 
     public List<Cube> GenerateCubes(int maxPlayer, ScaleType scaleType = ScaleType.Duplicates)
@@ -45,11 +47,17 @@ public class TableService
     private List<Cube> GenerateCubesForColors(int maxPlayer)
     {
         var cubes = new List<Cube>();
-      
+        maxPlayer = Int32.Max(4, maxPlayer);
         for (var i = 0; i < maxPlayer; i++)
         {
             for (var j = 0; j < 13; j++)
             {
+                cubes.Add(new Cube
+                {
+                    Id = Guid.NewGuid(),
+                    Color = i,
+                    Value = j
+                });
                 cubes.Add(new Cube
                 {
                     Id = Guid.NewGuid(),
@@ -76,12 +84,22 @@ public class TableService
                     Color = i,
                     Value = j
                 });
+                cubes.Add(new Cube
+                {
+                    Id = Guid.NewGuid(),
+                    Color = i,
+                    Value = j
+                });
             }
         }
 
         if (maxPlayer > 4)
         {
-            for (var i = 0; i < (maxPlayer-4)/2; i++)
+            var maxDuplicatedSets = (maxPlayer-4) / (decimal)2;
+            for(var repeat = 0; repeat < maxDuplicatedSets; repeat++)
+            {
+               
+            for (var i = 0; i < 4; i++)
             {
                 for (var j = 0; j < 13; j++)
                 {
@@ -93,6 +111,8 @@ public class TableService
                     });
                 }
             }
+            }
+
         }
         GenerateJokers(maxPlayer, cubes);
        
@@ -101,7 +121,15 @@ public class TableService
 
     private void GenerateJokers(int maxPlayer, List<Cube> cubes)
     {
-        for (var i = 0; i < maxPlayer/2; i++)
+        var maxJokers = (maxPlayer) / (decimal)2;
+        if(maxJokers %2 != 0 && maxPlayer > 4)
+        {
+            maxJokers = maxJokers +1;
+        }else if(maxPlayer <= 4)
+        {
+            maxJokers = 2;
+        }
+        for (var i = 0; i < maxJokers; i++)
         {
             cubes.Add(new Cube
             {
