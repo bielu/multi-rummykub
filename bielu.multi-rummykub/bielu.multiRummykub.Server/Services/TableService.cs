@@ -1,4 +1,5 @@
-﻿using bielu.multiRummykub.Models;
+﻿using System.Drawing;
+using bielu.multiRummykub.Models;
 using bielu.multiRummykub.Models.Table;
 using bielu.multiRummykub.Server.DbContexts;
 
@@ -19,16 +20,96 @@ public class TableService
         return _tableDbContext.Tables.FirstOrDefault(x => x.Id == tableId);
     }
 
-    public Table CreateTable(int maxPlayers)
+    public Table CreateTable(int maxPlayers , ScaleType scaleType = ScaleType.Duplicates)
     {
         var table = new Table
         {
-            Cubes = new List<Cube>(),
+            Cubes = GenerateCubes(maxPlayers,scaleType ),
             Players = new List<Guid>(),
-            MaxPlayers = maxPlayers
+            MaxPlayers = maxPlayers,
+            ScaleType = scaleType
         };
 
         return _tableDbContext.Tables.Add(table).Entity;
+    }
+
+    public List<Cube> GenerateCubes(int maxPlayer, ScaleType scaleType = ScaleType.Duplicates)
+    {
+        return scaleType switch
+        {
+            ScaleType.Duplicates => GenerateCubesForDuplicates(maxPlayer),
+            ScaleType.Colors => GenerateCubesForColors(maxPlayer),
+        };
+    }
+
+    private List<Cube> GenerateCubesForColors(int maxPlayer)
+    {
+        var cubes = new List<Cube>();
+      
+        for (var i = 0; i < maxPlayer; i++)
+        {
+            for (var j = 0; j < 13; j++)
+            {
+                cubes.Add(new Cube
+                {
+                    Id = Guid.NewGuid(),
+                    Color = i,
+                    Value = j
+                });
+            }
+        }
+        GenerateJokers(maxPlayer, cubes);
+        return cubes;
+    }
+
+    private List<Cube> GenerateCubesForDuplicates(int maxPlayer)
+    {
+        var cubes = new List<Cube>();
+      
+        for (var i = 0; i < 4; i++)
+        {
+            for (var j = 0; j < 13; j++)
+            {
+                cubes.Add(new Cube
+                {
+                    Id = Guid.NewGuid(),
+                    Color = i,
+                    Value = j
+                });
+            }
+        }
+
+        if (maxPlayer > 4)
+        {
+            for (var i = 0; i < (maxPlayer-4)/2; i++)
+            {
+                for (var j = 0; j < 13; j++)
+                {
+                    cubes.Add(new Cube
+                    {
+                        Id = Guid.NewGuid(),
+                        Color = i,
+                        Value = j
+                    });
+                }
+            }
+        }
+        GenerateJokers(maxPlayer, cubes);
+       
+        return cubes;
+    }
+
+    private void GenerateJokers(int maxPlayer, List<Cube> cubes)
+    {
+        for (var i = 0; i < maxPlayer/2; i++)
+        {
+            cubes.Add(new Cube
+            {
+                Id = Guid.NewGuid(),
+                Color = i,
+                IsJoker = true
+            });
+        }
     }
 
     public bool AddPlayer(Guid tableId, Guid playerId)
