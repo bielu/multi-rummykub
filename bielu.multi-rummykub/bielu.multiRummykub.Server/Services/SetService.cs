@@ -116,7 +116,25 @@ public class SetService : ISetService
             {
                 if (tempSet.Cubes.Count == 0)
                 {
+                    sets.Add(tempSet);
                     tempSet.Cubes.Add(cube);
+                }
+                else if (cube.IsJoker == true)
+                {
+                    tempSet = new CubeSet()
+                    {
+                        Id = new Guid(),
+                        Type = SetType.Color,
+                        Valid = true
+                    };
+                    sets.Add(tempSet);
+                    tempSet.Cubes.Add(cube);
+                    tempSet = new CubeSet()
+                    {
+                        Id = new Guid(),
+                        Type = SetType.Color,
+                        Valid = true
+                    };
                 }
                 else if (tempSet.Cubes.Last().Value == cube.Value - 1)
                 {
@@ -124,8 +142,14 @@ public class SetService : ISetService
                 }
                 else
                 {
+                 
+                    tempSet = new CubeSet()
+                    {
+                        Id = new Guid(),
+                        Type = SetType.Color,
+                        Valid = true
+                    };
                     sets.Add(tempSet);
-                    tempSet = new CubeSet();
                     tempSet.Cubes.Add(cube);
                 }
             }

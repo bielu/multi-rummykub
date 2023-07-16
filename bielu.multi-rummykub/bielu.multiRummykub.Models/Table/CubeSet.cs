@@ -6,4 +6,5 @@ public class CubeSet
     public bool Valid { get; set; }
     public SetType Type { get; set; }
     public List<Cube> Cubes { get; set; } = new List<Cube>();
+    public bool Locked { get; set; }
 }

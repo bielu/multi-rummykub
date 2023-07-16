@@ -1,23 +1,32 @@
 ﻿using System.Drawing;
 using bielu.multiRummykub.Models;
+using bielu.multiRummykub.Models.Player;
 using bielu.multiRummykub.Models.Table;
 using bielu.multiRummykub.Server.DbContexts;
 
 namespace bielu.multiRummykub.Server.Services;
 
-public class TableService
+public interface ITableService
 {
-    private readonly TableDbContext _tableDbContext;
-    private readonly PlayerDbContext _playerDbContext;
+    Table GetTable(Guid tableId);
+    Table CreateTable(int maxPlayers, ScaleType scaleType = ScaleType.Duplicates);
+    List<Cube> GenerateCubes(int maxPlayer, ScaleType scaleType = ScaleType.Duplicates);
+    bool AddPlayer(Guid tableId, Player playerId);
+    bool RemovePlayer(Guid tableId, Player playerId);
 
-    public TableService(TableDbContext tableDbContext, PlayerDbContext playerDbContext)
+    Task<Table> GetCurrentTable();
+}
+public class TableService : ITableService
+{
+    private readonly AppDbContext _dbContext;
+
+    public TableService(AppDbContext _dbContext)
     {
-        _tableDbContext = tableDbContext;
-        _playerDbContext = playerDbContext;
+        this._dbContext = _dbContext;
     }
     public Table GetTable(Guid tableId)
     {
-        return _tableDbContext.Tables.FirstOrDefault(x => x.Id == tableId);
+        return _dbContext.Tables.FirstOrDefault(x => x.Id == tableId);
     }
 
     public Table CreateTable(int maxPlayers , ScaleType scaleType = ScaleType.Duplicates)
@@ -26,13 +35,12 @@ public class TableService
         {
             Id = Guid.NewGuid(),
             Cubes = GenerateCubes(maxPlayers,scaleType ),
-            Players = new List<Guid>(),
+            Players = new List<Player>(),
             MaxPlayers = maxPlayers,
             ScaleType = scaleType
         };
 
-       // return _tableDbContext.Tables.Add(table).Entity;
-       return table;
+       return _dbContext.Tables.Add(table).Entity;
     }
 
     public List<Cube> GenerateCubes(int maxPlayer, ScaleType scaleType = ScaleType.Duplicates)
@@ -140,10 +148,10 @@ public class TableService
         }
     }
 
-    public bool AddPlayer(Guid tableId, Guid playerId)
+    public bool AddPlayer(Guid tableId, Player playerId)
     {
         var table = GetTable(tableId);
-        if (table.Players.Count >= table.MaxPlayers)
+        if (table.Players.Count() >= table.MaxPlayers)
         {
             return false;
         }
@@ -153,19 +161,19 @@ public class TableService
             return false;
         }
 
-        table.Players.Add(playerId);
+        table.Players= table.Players.Union(new List<Player>(){playerId});
         
         return UpdateTable(table);
     }
 
     private bool UpdateTable(Table table)
     {
-        var result = _tableDbContext.Tables.Update(table);
+        var result = _dbContext.Tables.Update(table);
         //todo: validate result
         return true;
     }
 
-    public bool RemovePlayer(Guid tableId, Guid playerId)
+    public bool RemovePlayer(Guid tableId, Player playerId)
     {
         var table = GetTable(tableId);
 
@@ -173,8 +181,13 @@ public class TableService
         {
             return true;
         }
+        table.Players= table.Players.Except(new List<Player>(){playerId});
 
-        table.Players.Remove(playerId);
         return UpdateTable(table);
+    }
+
+    public async Task<Table> GetCurrentTable()
+    {
+        return null;
     }
 }

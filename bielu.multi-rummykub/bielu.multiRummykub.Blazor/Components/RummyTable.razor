@@ -1,0 +1,189 @@
+﻿@using bielu.multiRummykub.Server.Services
+@using bielu.multiRummykub.Models.Table
+@using bielu.multiRummykub.Models.Player
+@using bielu.multiRummykub.Models.PersonalBoard
+@using bielu.multiRummykub.Models
+@if (currentTable != null)
+{
+    <div class="table">
+        <h3>Table</h3>
+
+        <div class="table-details">
+            <div class="table-details-current-players">
+                <strong> Players:</strong> @currentTable.Players.Count()
+            </div>
+            <div class="table-details-max-players">
+                <strong>Max Players:</strong> @currentTable.MaxPlayers
+            </div>
+            <div class="table-details-max-players">
+                <strong>Cubes:</strong> @currentTable.Cubes.Count()
+            </div>
+            <div class="table-details-scaling-mode">
+                <strong>Scale Mode:</strong> @currentTable.ScaleType
+            </div>
+
+        </div>
+        <div class="table-@(currentTable.Players.Count())-sits">
+            <div class="table-current-player-personal table">
+
+                <div class="table-current-cubes">
+                    @foreach (var cubeSet in currentTable.CubesOnTable)
+                    {
+                        <div class="cubeSet @dropClass"
+                             ondragover="event.preventDefault();"
+                             ondragstart="event.dataTransfer.setData('', event.target.id);"
+                             @ondrop="HandleDrop"
+                             @ondragenter="HandleDragEnter"
+                             @ondragleave="HandleDragLeave">
+                            @foreach (var cube in cubeSet.Cubes)
+                            {
+                                <div class="cube cube-@cube.Color" id="cube-@cube.Id">
+                                    @cube.Value
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="table-current-player-personal-table">
+                    <div class="table-personal-table-operations">
+                        <button class="btn btn-primary" @onclick="sortByColor">789</button>
+                        <button class="btn btn-primary" @onclick="sortByValue">777</button>
+                    </div>
+                    @if (CurrentPlayerPersonalBoard.Sets.Count == 0)
+                    {
+                        @foreach (var cube in CurrentPlayerPersonalBoard.Cubes)
+                        {
+                            <div class="cube cube-@cube.Color" id="cube-@cube.Id">
+                                @cube.Value
+                            </div>
+                        }
+                    }
+                    @foreach (var cubeSet in CurrentPlayerPersonalBoard.Sets)
+                    {
+                        <div class="cubeset @(cubeSet.Locked ? "cubeset-locked" : "")" id="cubeSet-@cubeSet.Id"
+                             ondragover="event.preventDefault();"
+                             ondragstart="event.dataTransfer.setData('', event.target.id);"
+                             @ondrop="HandleDrop"
+                             @ondragenter="HandleDragEnter"
+                             @ondragleave="HandleDragLeave">
+                            @if (!cubeSet.Locked)
+                            {
+                                <button @onclick="() => LockCubeSet(cubeSet)">Lock cubeset</button>
+ 
+                            }
+                            else
+                            {
+                                <button @onclick="() => UnLockCubeSet(cubeSet)">Unlock cubeset</button>
+
+                            }
+                            @foreach (var cube in cubeSet.Cubes)
+                            {
+                                <div class="cube cube-@cube.Color" id="cube-@cube.Id">
+                                    @cube.Value
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateTable">Create Table</button>
+}
+
+@code {
+
+    [Inject]
+    private ITableService TableService { get; set; }
+
+    string dropClass = "";
+
+    [Inject]
+    private ISetService SetService { get; set; }
+
+    public Table currentTable { get; set; }
+    public PersonalBoard CurrentPlayerPersonalBoard { get; set; }
+
+    private void sortByColor()
+    {
+        CurrentPlayerPersonalBoard.Sets = CurrentPlayerPersonalBoard.LockSets.Union(SetService.ProposeSets(CurrentPlayerPersonalBoard.Cubes.Where(x => !x.Locked).ToList(), SortType.Color)).ToList();
+    }
+
+    private void sortByValue()
+    {
+        CurrentPlayerPersonalBoard.Sets = CurrentPlayerPersonalBoard.LockSets.Union(SetService.ProposeSets(CurrentPlayerPersonalBoard.Cubes.Where(x => !x.Locked).ToList(), SortType.Value)).ToList();
+    }
+
+    private void CreateTable()
+    {
+        currentTable = TableService.CreateTable(4);
+        currentTable.Players = new List<Player>()
+        {
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu",
+                TableId = currentTable
+            },
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu2",
+                TableId = currentTable
+            },
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu3",
+                TableId = currentTable
+            }
+        };
+        currentTable.ShuffleCubes();
+        CurrentPlayerPersonalBoard = currentTable.PersonalBoard.FirstOrDefault();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentTable = await TableService.GetCurrentTable();
+    }
+
+    private void HandleDragEnter()
+    {
+        dropClass = "can-drop";
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+    }
+
+    private async Task HandleDrop()
+    {
+        dropClass = "";
+    }
+
+    private void LockCubeSet(CubeSet cubeSet)
+    {
+        CurrentPlayerPersonalBoard.LockSets.Add(cubeSet);
+        cubeSet.Locked = true;
+        foreach (var cube in cubeSet.Cubes)
+        {
+            cube.Locked = true;
+        }
+     
+    }
+    private void UnLockCubeSet(CubeSet cubeSet)
+    {
+        CurrentPlayerPersonalBoard.LockSets.Remove(cubeSet);
+        cubeSet.Locked = false;
+        foreach (var cube in cubeSet.Cubes)
+        {
+            cube.Locked = false;
+        }
+     
+    }
+}
