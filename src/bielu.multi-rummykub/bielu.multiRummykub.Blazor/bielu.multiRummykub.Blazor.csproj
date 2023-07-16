@@ -28,4 +28,8 @@
       <ProjectReference Include="..\bielu.multiRummykub.Server\bielu.multiRummykub.Server.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="css\" />
+    </ItemGroup>
+
 </Project>

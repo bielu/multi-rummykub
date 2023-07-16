@@ -484,3 +484,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/rider,visualstudio
 src/.idea
 bielu.multi-rummykub/.idea
+src/bielu.multi-rummykub/.idea
