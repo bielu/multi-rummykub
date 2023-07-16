@@ -1,0 +1,144 @@
+﻿@using bielu.multiRummykub.Server.Services
+@using bielu.multiRummykub.Models.Table
+@using bielu.multiRummykub.Models.Player
+@using bielu.multiRummykub.Models.PersonalBoard
+<section class="container px-4 mx-auto">
+<h1>Tables</h1>
+    <button class="btn btn-primary" @onclick="CreateTable">Create Table</button>
+
+    <div class="flex flex-col mt-6">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                        <span>Owner</span>
+                                </th>
+
+                                <th scope="col" class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Status
+                                </th>
+
+                                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Players
+                                </th>
+
+                                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Protected</th>
+
+                                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Join</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+@foreach(Table table in Tables){
+                            <tr>
+                                <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                                    <div>
+                                        <h2 class="font-medium text-gray-800 dark:text-white ">Bielu</h2>
+                                    </div>
+                                </td>
+                                <td class="px-12 py-4 text-sm font-medium whitespace-nowrap">
+                                        Public
+                                </td>
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                               <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                           </svg>
+                                </td>
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                   5 / 8
+                                </td>
+
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                  <button>Join</button>
+                                </td>
+
+                              
+                            </tr>
+}
+   <tr>
+                                <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                                    <div>
+                                        <h2 class="font-medium text-gray-800 dark:text-white ">Bielu2</h2>
+                                    </div>
+                                </td>
+                                <td class="px-12 py-4 text-sm font-medium whitespace-nowrap">
+                                        Private
+                                </td>
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                            </svg>
+                                </td>
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                   5 / 8
+                                </td>
+
+                                <td class="px-4 py-4 text-sm whitespace-nowrap">
+<input type="password" >
+                                  <button>Join</button>
+                                </td>
+
+                              
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-6">
+        <a href="#" class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+            </svg>
+
+            <span>
+                previous
+            </span>
+        </a>
+
+        <div class="items-center hidden md:flex gap-x-3">
+            <a href="#" class="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-gray-800 bg-blue-100/60">1</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">2</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">3</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">...</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">12</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">13</a>
+            <a href="#" class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">14</a>
+        </div>
+
+        <a href="#" class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+            <span>
+                Next
+            </span>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+            </svg>
+        </a>
+    </div>
+</section>
+
+@code {
+[Inject]
+public NavigationManager navigationManager { get; set; }
+      private void CreateTable()
+    {
+     var table= TableService.CreateTable(4);
+         navigationManager.NavigateTo("/table/"+table.Id.ToString() ,false);
+    }
+List<Table> Tables {get; set; }
+  [Inject]
+    private ITableService TableService { get; set; }
+   protected override async Task OnInitializedAsync()
+    {
+        Tables =  TableService.GetTables(1,10);
+    }
+
+}

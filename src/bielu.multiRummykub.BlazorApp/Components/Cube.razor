@@ -1,0 +1,10 @@
+﻿ <div class="cube cube--@CurrentCube.Color" id="cube-@CurrentCube.Id">
+                                    @CurrentCube.Value
+                                </div>
+
+@code {
+    [Parameter]
+    public Models.Cube CurrentCube { get; set; }
+
+    
+}

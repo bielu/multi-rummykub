@@ -1,0 +1,127 @@
+﻿@using bielu.multiRummykub.Server.Services
+@using bielu.multiRummykub.Models.Table
+@using bielu.multiRummykub.Models.Player
+@using bielu.multiRummykub.Models.PersonalBoard
+@using bielu.multiRummykub.Models
+@if (currentTable != null)
+{
+    <div class="table">
+        <h3>Table</h3>
+
+        <div class="table-details">
+            <div class="table-details-current-players">
+                <strong> Players:</strong> @currentTable.Players.Count()
+            </div>
+            <div class="table-details-max-players">
+                <strong>Max Players:</strong> @currentTable.MaxPlayers
+            </div>
+            <div class="table-details-max-players">
+                <strong>Cubes:</strong> @currentTable.Cubes.Count()
+            </div>
+            <div class="table-details-scaling-mode">
+                <strong>Scale Mode:</strong> @currentTable.ScaleType
+            </div>
+
+        </div>
+        <div class="table-@(currentTable.Players.Count())-sits">
+            <div class="table-current-player-personal table">
+
+                <div class="table-current-cubes">
+                    @foreach (var cubeSet in currentTable.CubesOnTable)
+                    {
+                        <CubeSet Model="cubeSet"></CubeSet>
+                    }
+                </div>
+                <div class="table-current-player-personal-table">
+                    <div class="table-personal-table-operations">
+                        <button class="btn btn-primary" @onclick="sortByColor">789</button>
+                        <button class="btn btn-primary" @onclick="sortByValue">777</button>
+                    </div>
+                    @if (CurrentPlayerPersonalBoard.Sets.Count == 0)
+                    {
+                        @foreach (var cube in CurrentPlayerPersonalBoard.Cubes)
+                        {
+                            <div class="cube cube-@cube.Color" id="cube-@cube.Id">
+                                @cube.Value
+                            </div>
+                        }
+                    }
+                    @foreach (var cubeSetModel in CurrentPlayerPersonalBoard.Sets)
+                    {
+                         <CubeSet Model="cubeSetModel" CurrentPlayerPersonalBoard="CurrentPlayerPersonalBoard"></CubeSet>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="MoveBack">Get back to table list</button>
+
+}
+
+@code {
+
+  [Parameter]
+  public Guid Id { get; set; }
+  [Inject]
+    private ITableService TableService { get; set; }
+    [Inject]
+    private ISetService SetService { get; set; }
+
+    public Table currentTable { get; set; }
+    public PersonalBoard CurrentPlayerPersonalBoard { get; set; }
+
+    private void sortByColor()
+    {
+        CurrentPlayerPersonalBoard.Sets = CurrentPlayerPersonalBoard.LockSets.Union(SetService.ProposeSets(CurrentPlayerPersonalBoard.Cubes.Where(x => !x.Locked).ToList(), SortType.Color)).ToList();
+    }
+
+    private void sortByValue()
+    {
+        CurrentPlayerPersonalBoard.Sets = CurrentPlayerPersonalBoard.LockSets.Union(SetService.ProposeSets(CurrentPlayerPersonalBoard.Cubes.Where(x => !x.Locked).ToList(), SortType.Value)).ToList();
+    }
+   private void MoveBack()
+    {
+   navigationManager.NavigateTo("/" ,false);
+    }
+[Inject]
+public NavigationManager navigationManager { get; set; }
+  	private void Shuffle(){
+ currentTable.Players = new List<Player>()
+        {
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu",
+                TableId = currentTable
+            },
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu2",
+                TableId = currentTable
+            },
+            new Player()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bielu3",
+                TableId = currentTable
+            }
+        };
+currentTable.Cubes =  TableService.GenerateCubes(currentTable.MaxPlayers,currentTable.ScaleType );
+        currentTable.ShuffleCubes();
+        CurrentPlayerPersonalBoard = currentTable.PersonalBoard.FirstOrDefault();
+}
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentTable =  TableService.GetTable(Id);
+ Shuffle();
+    }
+
+   
+
+}

@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>bielu.multiRummykub.BlazorApp</RootNamespace>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>1e616e97-66a9-4861-a81b-227ea05f83cc</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Blazor.Heroicons" Version="1.2.3" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\bielu.multiRummykub.Server\bielu.multiRummykub.Server.csproj" />
+    </ItemGroup>
+    <Target Name="NpmInstallCheck" BeforeTargets="TailwindCSS" Inputs="./package.json" Outputs="./node_modules/.package-lock.json">
+        <Message Text="NpmInstallCheck Starting..." Importance="high"></Message>
+        <Exec Command="npm -v" ContinueOnError="true" StandardOutputImportance="low">
+            <Output TaskParameter="ExitCode" PropertyName="error" />
+        </Exec>
+        <Error Condition="'$(error)' != '0'" Text="install node.js please !" />
+        <Exec Command="npm install" />
+        <Message Text="NpmInstallCheck Finished !" Importance="high"></Message>
+    </Target>
+    <Target Name="TailwindCSS" AfterTargets="AfterBuild" Condition="'$(TailwindBuild)' == 'true'">
+        <Message Text="TailwindCSS Starting..." Importance="high"></Message>
+        <Exec Command="npm run build" Condition="'$(Configuration)' == 'Debug'" />
+        <Exec Command="npm run publish" Condition="'$(Configuration)' == 'Release'" />
+        <Message Text="TailwindCSS Finished !" Importance="high"></Message>
+    </Target>
+</Project>

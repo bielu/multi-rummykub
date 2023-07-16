@@ -1,0 +1,7 @@
+﻿@page "/table"
+@page "/table/{id:guid}"
+<RummyTable Id="Id"></RummyTable>
+@code {
+  [Parameter]
+  public Guid Id { get; set; }
+}
