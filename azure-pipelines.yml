@@ -17,8 +17,6 @@ variables:
 stages:
   - stage: build
     displayName: Build
-    variables:
-      - group: "Global"
     jobs:
     - job: Build
       pool:  
