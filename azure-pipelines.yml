@@ -18,8 +18,7 @@ stages:
     displayName: Build
     jobs:
     - job: Build
-      pool:  
-        vmImage: "windows-latest"
+      pool: 'default'
       steps:
       - task: DotNetCoreCLI@2
         inputs:
