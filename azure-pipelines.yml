@@ -22,24 +22,42 @@ stages:
       pool:  
         vmImage: "windows-latest"
       steps:
-      - task: NuGetToolInstaller@1
-
-      - task: NuGetCommand@2
+      - task: DotNetCoreCLI@2
         inputs:
-          restoreSolution: '$(solution)'
-
-      - task: VSBuild@1
+          command: 'restore'
+          projects: '$(solution)'
+          feedsToUse: 'select'
+          vstsFeed: '5d472129-f05e-4dfb-87be-99999c7da2dd'
+      - task: DotNetCoreCLI@2
         inputs:
-          solution: '$(solution)'
-          msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-          platform: '$(buildPlatform)'
-          configuration: '$(buildConfiguration)'
-
+          command: 'build'
+          projects: '$(solution)'
       - task: VSTest@2
         inputs:
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'publish'
+          publishWebProjects: true
+          arguments: '—runtime linux-64 —output $(Build.ArtifactDirectory)'
       - task: PublishBuildArtifacts@1
         displayName: "Publishing"
         inputs:
           pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+  - stage: deploy
+    displayName: Deploy
+    jobs:
+      - deployment: deploy
+        environment: dev  
+        pool: default
+        strategy:
+          runOnce:    #rolling, canary are the other strategies that are supported
+            deploy:
+              steps:
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: '**/*.zip'
+                    destinationFolder: '/var/www/html/rummy.bielu.pl'
+                    cleanDestinationFolder: true
+                    overwriteExistingFiles: true
