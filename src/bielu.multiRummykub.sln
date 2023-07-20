@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bielu.multiRummykub.Server"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bielu.multiRummykub.UnitTests", "bielu.multiRummykub.UnitTests\bielu.multiRummykub.UnitTests.csproj", "{E5367192-818F-4F7D-A40D-FBE7F16119B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bielu.multiRummykub.Blazor.DragAndDrop", "bielu.multiRummykub.Blazor.DragAndDrop\bielu.multiRummykub.Blazor.DragAndDrop.csproj", "{289058FB-0E9C-4B99-B605-45A45206AD91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +40,9 @@ Global
 		{E5367192-818F-4F7D-A40D-FBE7F16119B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5367192-818F-4F7D-A40D-FBE7F16119B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5367192-818F-4F7D-A40D-FBE7F16119B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289058FB-0E9C-4B99-B605-45A45206AD91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289058FB-0E9C-4B99-B605-45A45206AD91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289058FB-0E9C-4B99-B605-45A45206AD91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289058FB-0E9C-4B99-B605-45A45206AD91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

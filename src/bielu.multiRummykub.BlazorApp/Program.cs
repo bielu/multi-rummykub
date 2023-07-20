@@ -1,3 +1,4 @@
+using bielu.multiRummykub.Blazor.DragAndDrop;
 using bielu.multiRummykub.Server.DbContexts;
 using bielu.multiRummykub.Server.Services;
 using Microsoft.AspNetCore.Components;
@@ -23,7 +24,7 @@ else
 }
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ISetService, SetService>();
-
+builder.Services.AddBlazorDragDrop();
 // Add the Vite Manifest Service.
 var app = builder.Build();
 

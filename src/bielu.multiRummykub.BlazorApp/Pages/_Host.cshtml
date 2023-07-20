@@ -7,15 +7,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <link href="dist/main.css" rel="stylesheet"  asp-append-version="true"/>
+    <link href="/dist/main.css" rel="stylesheet"  asp-append-version="true"/>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered"/>
 </head>
 <body>
 
 
 <component type="typeof(Navigation)" render-mode="ServerPrerendered"/>
+<div>
+<component type="typeof(Breadcrumbs)" render-mode="ServerPrerendered"/>
 
-<component type="typeof(App)" render-mode="ServerPrerendered"/>
+    <component type="typeof(App)" render-mode="ServerPrerendered"/>
+    
+</div>
 
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
@@ -28,6 +32,6 @@
     <a class="dismiss">🗙</a>
 </div>
 
-<script src="_framework/blazor.server.js"></script>
+<script src="/_framework/blazor.server.js"></script>
 </body>
 </html>

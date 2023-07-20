@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\bielu.multiRummykub.Blazor.DragAndDrop\bielu.multiRummykub.Blazor.DragAndDrop.csproj" />
       <ProjectReference Include="..\bielu.multiRummykub.Server\bielu.multiRummykub.Server.csproj" />
     </ItemGroup>
     <Target Name="NpmInstallCheck" BeforeTargets="TailwindCSS" Inputs="./package.json" Outputs="./node_modules/.package-lock.json">

@@ -6,7 +6,7 @@ public class Table
 {
     public IList<Cube> Cubes { get; set; }
     public bool Private { get; set; }
-    public string Password { get; set; }
+    public string? Password { get; set; }
     private IList<Cube> CubesOnStack { get; set; } = new List<Cube>();
     public IList<CubeSet> CubesOnTable { get; set; } = new List<CubeSet>();
     public IList<PersonalBoard.PersonalBoard> PersonalBoard { get; set; } = new List<PersonalBoard.PersonalBoard>();
@@ -16,7 +16,7 @@ public class Table
     [Key]
     public Guid Id { get; set; }
     public Guid TableOwner { get; set; }
-
+    public Player.Player? CurrentPlayer { get; set; }
     public void ShuffleCubes()
     {
         var usedCubes = new List<Cube>();

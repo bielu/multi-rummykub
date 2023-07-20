@@ -8,30 +8,52 @@
     <div class="table">
         <h3>Table</h3>
 
-        <div class="table-details">
-            <div class="table-details-current-players">
-                <strong> Players:</strong> @currentTable.Players.Count()
-            </div>
-            <div class="table-details-max-players">
-                <strong>Max Players:</strong> @currentTable.MaxPlayers
-            </div>
-            <div class="table-details-max-players">
-                <strong>Cubes:</strong> @currentTable.Cubes.Count()
-            </div>
-            <div class="table-details-scaling-mode">
-                <strong>Scale Mode:</strong> @currentTable.ScaleType
-            </div>
 
-        </div>
-        <div class="table-@(currentTable.Players.Count())-sits">
-            <div class="table-current-player-personal table">
-
-                <div class="table-current-cubes">
-                    @foreach (var cubeSet in currentTable.CubesOnTable)
-                    {
-                        <CubeSet Model="cubeSet"></CubeSet>
-                    }
+        <div class="table-@(currentTable.Players.Count())-sits table-main-area">
+            <div class="max-w-2xl px-8 py-4 bg-white rounded-lg shadow-md dark:bg-gray-800 table-info">
+                <div class="flex items-center justify-between">
+                    <a class="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500" tabindex="0" role="button">@(currentTable.Private ? "Private" : "Public")</a>
                 </div>
+
+                <div class="mt-2 table-details">
+                    <div class="table-details-current-players">
+                        <strong class="text-xl font-bold text-gray-700 dark:text-white "> Players:</strong> @currentTable.Players.Count()
+                    </div>
+                    <div class="table-details-max-players">
+                        <strong class="text-xl font-bold text-gray-700 dark:text-white ">Max Players:</strong> @currentTable.MaxPlayers
+                    </div>
+                    <div class="table-details-max-players">
+                        <strong class="text-xl font-bold text-gray-700 dark:text-white ">Cubes:</strong> @currentTable.Cubes.Count()
+                    </div>
+                    <div class="table-details-scaling-mode">
+                        <strong class="text-xl font-bold text-gray-700 dark:text-white ">Scale Mode:</strong> @currentTable.ScaleType
+                    </div>
+                </div>
+
+
+            </div>
+            @{
+                var angle = 360 / currentTable.Players.Count();
+                var i = 2;
+            }
+            <div class="tables-wrapper">
+                @foreach (var player in currentTable.Players.Where(x => x.Id != CurrentPlayerPersonalBoard.PlayerId))
+                {
+                    <div class="personal-table-other-player @(player.Id == CurrentPlayerPersonalBoard.PlayerId ? "active" : "")" style=" transform: rotate(@(angle * i)deg) translate(@(25 * i)%) rotate(-@(angle * i)deg);">
+                        <div>@player.Name</div>
+                        <div>@currentTable.PersonalBoard.FirstOrDefault(x => x.PlayerId == player.Id).Cubes.Count</div>
+                    </div>
+                    i++;
+                }
+                <div class="table-current-cubes">
+                    <Dropzone Items="currentTable.CubesOnTable">
+                        <CubeSet Model="@context"></CubeSet>
+
+                    </Dropzone>
+                </div>
+            </div>
+
+            <div class="table-current-player-personal table">
                 <div class="table-current-player-personal-table">
                     <div class="table-personal-table-operations">
                         <button class="btn btn-primary" @onclick="sortByColor">789</button>
@@ -39,18 +61,15 @@
                     </div>
                     @if (CurrentPlayerPersonalBoard.Sets.Count == 0)
                     {
-                        @foreach (var cube in CurrentPlayerPersonalBoard.Cubes)
-                        {
-                            <div class="cube cube-@cube.Color" id="cube-@cube.Id">
-                                @cube.Value
-                            </div>
-                        }
-                    }
-                    @foreach (var cubeSetModel in CurrentPlayerPersonalBoard.Sets)
-                    {
-                         <CubeSet Model="cubeSetModel" CurrentPlayerPersonalBoard="CurrentPlayerPersonalBoard"></CubeSet>
+                        <Dropzone Items="CurrentPlayerPersonalBoard.Cubes" Class="personal-board-dropzone">
+                            <Cube CurrentCube="@context"></Cube>
+                        </Dropzone>
                     }
 
+                    <Dropzone Items="CurrentPlayerPersonalBoard.Sets" Class="personal-board-dropzone">
+
+                        <CubeSet Model="@context" CurrentPlayerPersonalBoard="CurrentPlayerPersonalBoard"></CubeSet>
+                    </Dropzone>
                 </div>
             </div>
         </div>
@@ -59,15 +78,167 @@
 else
 {
     <button class="btn btn-primary" @onclick="MoveBack">Get back to table list</button>
-
 }
+<style>
+.table-current-cubes>.plk-dd-dropzone{width: 100%;height:100%;display: block;}
+.table-current-cubes {
+    min-width: 100%;
+    min-height: 500px;
+    background: yellow;
+}
+.personal-board-dropzone{
+    display: flex;
+}
+/*add this to avoid flickering*/
+.plk-dd-inprogess > * {
+    pointer-events: none;
+}
+
+/*dropzone style style*/
+.plk-dd-dropzone {
+    min-height: 50px;
+}
+
+/*drag drop styles*/
+
+.plk-dd-spacing {
+    height: 10px;
+}
+
+.plk-dd-spacing-dragged-over {
+    padding: 25px;
+}
+
+.plk-dd-dragged-over {
+    background-color: lightgray;
+    opacity: 0.6;
+    animation: blinker 1s linear infinite;
+}
+
+.plk-dd-dragged-over > div {
+    background-color: lightgray;
+    opacity: 0.6;
+    animation: blinker 1s linear infinite;
+}
+
+.plk-dd-dragged-over-denied {
+	background-color: red;
+	opacity: 0.6;
+	animation: blinker 1s linear infinite;
+}
+
+.plk-dd-in-transit {
+    opacity: 0;
+}
+
+.plk-dd-in-transit > div {
+     opacity: 0;
+}
+
+@@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink_me {
+    animation: blinker 1s linear infinite;
+}
+
+/*for flex demo*/
+
+.plk-flex .plk-dd-spacing {
+    width: 20px;
+    height: auto;
+}
+
+.plk-flex .plk-dd-dragged-over {
+    background-color: lightgray;
+    opacity: 0.6;
+    animation: blinker 1s linear infinite;
+}
+
+.plk-flex .plk-dd-dragged-over > div {
+    background-color: lightgray;
+    opacity: 0.9;
+    animation: blinker 1s linear infinite;
+}
+
+.plk-flex .plk-dd-in-transit {
+    background-color: orangered;
+}
+
+.plk-flex .plk-dd-in-transit > div {
+    background-color: orangered;
+}
+
+.plk-dd-noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+      .max-w-2xl.px-8.py-4.bg-white.rounded-lg.shadow-md.dark\:bg-gray-800.table-info {
+                         position: absolute;
+                         top: 0;
+                         right: 0;
+                         z-index: 9;
+                     }
+ 
+                     .table-main-area {
+                         width: 100%;
+                         height: 90vh;
+                         background: red;
+                         min-width: 90vw;
+                         padding: 100px;
+                         position: relative;
+                     }
+ 
+                     div#blazor-error-ui {
+                         display: none;
+                     }
+ 
+                     .personal-table-other-player {
+                         background: blue;
+                         width: 100px;
+                         position: absolute;
+                         height: 100px;
+                         position: absolute;
+                         left: 0;
+                         right: 0;
+                         margin: 0 auto;
+                     }
+ 
+                     .table-current-player-personal-table {
+                         left: 0;
+                             bottom: 0;
+                             max-width: 100%;
+                             flex-wrap: wrap;
+                             position: absolute;
+                     }
+ 
+                     .tables-wrapper {
+                         width: 100%;
+                         height: 100%;
+                         position: relative;
+                     }
+                     .table-personal-table-operations {
+                         display: flex;
+                         flex-direction: column;
+                     }
+</style>
 
 @code {
 
-  [Parameter]
-  public Guid Id { get; set; }
-  [Inject]
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [Inject]
     private ITableService TableService { get; set; }
+
     [Inject]
     private ISetService SetService { get; set; }
 
@@ -83,14 +254,18 @@ else
     {
         CurrentPlayerPersonalBoard.Sets = CurrentPlayerPersonalBoard.LockSets.Union(SetService.ProposeSets(CurrentPlayerPersonalBoard.Cubes.Where(x => !x.Locked).ToList(), SortType.Value)).ToList();
     }
-   private void MoveBack()
+
+    private void MoveBack()
     {
-   navigationManager.NavigateTo("/" ,false);
+        navigationManager.NavigateTo("/", false);
     }
-[Inject]
-public NavigationManager navigationManager { get; set; }
-  	private void Shuffle(){
- currentTable.Players = new List<Player>()
+
+    [Inject]
+    public NavigationManager navigationManager { get; set; }
+
+    private void Shuffle()
+    {
+        currentTable.Players = new List<Player>()
         {
             new Player()
             {
@@ -111,17 +286,21 @@ public NavigationManager navigationManager { get; set; }
                 TableId = currentTable
             }
         };
-currentTable.Cubes =  TableService.GenerateCubes(currentTable.MaxPlayers,currentTable.ScaleType );
+        currentTable.Cubes = TableService.GenerateCubes(currentTable.MaxPlayers, currentTable.ScaleType);
         currentTable.ShuffleCubes();
         CurrentPlayerPersonalBoard = currentTable.PersonalBoard.FirstOrDefault();
-}
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        currentTable =  TableService.GetTable(Id);
- Shuffle();
+        currentTable = TableService.GetTable(Id);
+        if (currentTable == null)
+        {
+            currentTable = TableService.CreateTable(4);
+        }
+        Shuffle();
     }
 
-   
+
 
 }

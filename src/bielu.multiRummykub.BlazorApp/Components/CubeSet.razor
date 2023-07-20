@@ -1,32 +1,60 @@
-﻿@using Blazor.Heroicons
-<div class="cubeSet @dropClass"
-     ondragover="event.preventDefault();"
-     ondragstart="event.dataTransfer.setData('', event.target.id);"
-     @ondrop="HandleDrop"
-     @ondragenter="HandleDragEnter"
-     @ondragleave="HandleDragLeave">
-    @if (CurrentPlayerPersonalBoard != null)
-    {
-        if (!Model.Locked)
-        {
-            <button @onclick="() => LockCubeSet(Model)"> <LockClosedIcon class="h-6 w-6 text-blue-500" /></button>
-        }
-        else
-        {
-            <button @onclick="() => UnLockCubeSet(Model)"> <LockOpenIcon class="h-6 w-6 text-blue-500" /></button>
-        }
-    }
+﻿@if (Model.Cubes.Any())
+{
+    <div class="cubeSet @dropClass"
+         ondragover="event.preventDefault();"
+         ondragstart="event.dataTransfer.setData('', event.target.id);"
+         @ondrop="HandleDrop"
+         @ondragenter="HandleDragEnter"
+         @ondragleave="HandleDragLeave">
+        <div class="lock-action">
+            @if (CurrentPlayerPersonalBoard != null)
+            {
+                if (!Model.Locked)
+                {
+                    <button @onclick="() => LockCubeSet(Model)">
+                        <LockClosedIcon class="h-6 w-6 text-blue-500"/>
+                    </button>
+                }
+                else
+                {
+                    <button @onclick="() => UnLockCubeSet(Model)">
+                        <LockOpenIcon class="h-6 w-6 text-blue-500"/>
+                    </button>
+                }
+            }
+        </div>
+        <Dropzone Items="Model.Cubes" >
+            <Cube CurrentCube="@context"></Cube>
+        </Dropzone>
 
-    @foreach (var cube in Model.Cubes)
-    {
-        <Cube CurrentCube="cube"></Cube>
+    </div>
+}
+
+<style>
+    .lock-action {
+        position: absolute;
+        top: -5px;
+        right: 0;
     }
-</div>
+    
+    .cubeSet.s {
+        position: relative;
+        padding: 20px;
+    }
+    
+    .lock-action button {
+        height: 20px;
+        width: 20px;
+        background: red;
+        font-size: 0;
+    }
+</style>
 
 @code {
 
     [Parameter]
     public Models.Table.CubeSet Model { get; set; }
+
     [Parameter]
     public Models.PersonalBoard.PersonalBoard? CurrentPlayerPersonalBoard { get; set; }
 
@@ -66,6 +94,5 @@
             cube.Locked = false;
         }
     }
-
 
 }
