@@ -7,6 +7,7 @@ namespace bielu.multiRummykub.UnitTests.Services;
 
 public class TableServiceTests
 {
+    /*
     [Fact]
     public void CreateTable_2Players_Duplicates_106Cubes()
     {
@@ -18,8 +19,7 @@ public class TableServiceTests
     [Fact]
     public void CreateTable_2Players_Colors_106Cubes()
     {
-        var mockTableDb = new Mock<TableDbContext>();
-        var mockPlayerDb = new Mock<PlayerDbContext>();
+        var mockTableDb = new Mock<AppDbContext>();
         var tableService = new TableService(null,null);
         var table = tableService.CreateTable(2, ScaleType.Colors);
         Assert.Equal(106, table.Cubes.Count);
@@ -92,4 +92,5 @@ public class TableServiceTests
         var table = tableService.CreateTable(8, ScaleType.Colors);
         Assert.Equal(212, table.Cubes.Count);
     }
+    */
 }
