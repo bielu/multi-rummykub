@@ -6,8 +6,7 @@
 trigger:
 - main
 pr: none
-pool:
-  vmImage: 'windows-latest'
+pool: 'default'
 
 variables:
   solution: '**/*.sln'
@@ -36,7 +35,7 @@ stages:
         inputs:
           command: 'publish'
           publishWebProjects: true
-          arguments: '—runtime linux-64 —output $(Build.ArtifactDirectory)'
+          arguments: '—output $(Build.ArtifactDirectory)'
       - task: PublishBuildArtifacts@1
         displayName: "Publishing"
         inputs:
