@@ -39,9 +39,6 @@ stages:
           command: 'custom'
           workingDir: "$(System.DefaultWorkingDirectory)/src/bielu.multiRummykub.BlazorApp"
           customCommand: 'run build'
-      - script: |
-          npm run build
-        displayName: 'npm build'
       - task: DotNetCoreCLI@2
         inputs:
           command: 'build'
